@@ -10,7 +10,7 @@ import { text } from 'stream/consumers';
   styleUrl: './countdown.component.scss'
 })
 export class CountdownComponent {
-  targetDate: Date = new Date('January 3, 2025 00:00:00');
+  targetDate: Date = new Date('January 3, 2027 00:00:00');
   currentTime: Date = new Date();
   days: string = '';
   hours: string = '';
