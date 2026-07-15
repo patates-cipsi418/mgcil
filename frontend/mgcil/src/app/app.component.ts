@@ -7,7 +7,7 @@ import { ClosureComponent } from "./shared/components/closure/closure.component"
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent, AlertComponent, ClosureComponent],
+  imports: [RouterOutlet, NavbarComponent, AlertComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
