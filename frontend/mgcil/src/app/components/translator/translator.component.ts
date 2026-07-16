@@ -17,7 +17,6 @@ export class TranslatorComponent {
   inputNumber?: number;
   translatedNumber?: string;
   selectedLanguage: string = "en-GB";
-  isSpeechDisabled = false;
 
   onSubmit() {
     this.translatedNumber = "";
@@ -57,10 +56,6 @@ export class TranslatorComponent {
 
     const utterance = new SpeechSynthesisUtterance(this.translatedNumber);
     utterance.lang = this.selectedLanguage;
-    utterance.onend = () => this.isSpeechDisabled = false;
-    utterance.onerror = () => this.isSpeechDisabled = false;
-
-    this.isSpeechDisabled = true;
     window.speechSynthesis.speak(utterance);
   }
 }

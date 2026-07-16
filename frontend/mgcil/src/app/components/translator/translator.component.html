@@ -68,21 +68,12 @@
         type="button"
         class="btn btn-light mt-auto"
         (click)="onSpeech()"
-        [disabled]="isSpeechDisabled"	
       >
-        @if (isSpeechDisabled) {
-          <span>
-            <i class="bi bi-hourglass-split"></i>
-            &nbsp;Cooldown womp womp&nbsp;
-            <i class="bi bi-hourglass-split"></i>
-          </span>
-        } @else {
-          <span>
-            <i class="bi bi-megaphone-fill"></i>
-            &nbsp;HEAR IT!&nbsp;
-            <i class="bi bi-megaphone-fill"></i>
-          </span>
-        }
+        <span>
+          <i class="bi bi-megaphone-fill"></i>
+          &nbsp;HEAR IT!&nbsp;
+          <i class="bi bi-megaphone-fill"></i>
+        </span>
       </button>
     </div>
   </div>
