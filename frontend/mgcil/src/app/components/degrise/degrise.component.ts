@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { SoundButtonComponent } from "../yapper/sound-button/sound-button.component";
-import { HttpService } from '../../shared/services/http.service';
 import { FormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
-import { environment } from '../../../environments/environment';
+import { SoundButton } from '../yapper/sounds.data';
+import { DEGRISE_SOUNDS } from './degrise.data';
 
 @Component({
   selector: 'app-degrise',
@@ -13,17 +13,13 @@ import { environment } from '../../../environments/environment';
   styleUrl: './degrise.component.scss'
 })
 export class DegriseComponent implements OnInit {
-  allButtons: any = [];
-  currentButtons: any = null;
-  apiURL: string = environment.apiUrl;
-  suggestion: string = '';
+  allButtons: SoundButton[] = [];
+  currentButtons: SoundButton[] | null = null;
   searchTerm: string = '';
   searchSubject: Subject<string> = new Subject();
   currentSound?: HTMLAudioElement;
 
-  constructor(
-    private httpService: HttpService,
-  ) {
+  constructor() {
     this.searchSubject
     .pipe(
       debounceTime(500),
@@ -35,26 +31,22 @@ export class DegriseComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.httpService.get(`${this.apiURL}/degrise`)
-      .subscribe((response) => {
-        this.allButtons = response;
-        this.currentButtons = this.allButtons;
-      }
-    );
+    // Sons embarqués dans le front (plus de dépendance au backend)
+    this.allButtons = DEGRISE_SOUNDS;
+    this.currentButtons = this.allButtons;
   }
 
   playSound(index: number) {
+    const button = this.currentButtons?.[index];
+    if (!button) {
+      return;
+    }
+
     // Stop all the sounds
     this.currentSound?.pause();
 
-    // Start new sound
-    if (environment.production) {
-      const url = `https://audio.jukehost.co.uk/${this.currentButtons[index].endpoint}`;
-      this.currentSound = new Audio(url);
-    } else {
-      const url = `https://audio.jukehost.co.uk/${this.currentButtons[index].endpoint}`;
-      this.currentSound = new Audio(url);
-    }
+    // Start new sound (mp3 embarqués dans le front, servis depuis public/degrise)
+    this.currentSound = new Audio(`degrise/${button.sound}.mp3`);
 
     this.currentSound.play();
   }
@@ -73,7 +65,7 @@ export class DegriseComponent implements OnInit {
       return;
     }
 
-    this.currentButtons = this.allButtons.filter((button: any) => {
+    this.currentButtons = this.allButtons.filter((button: SoundButton) => {
       return button.name.toLowerCase().includes(searchTerm.toLowerCase());
     });
   }

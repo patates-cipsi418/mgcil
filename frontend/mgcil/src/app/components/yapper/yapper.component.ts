@@ -1,10 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SoundButtonComponent } from "./sound-button/sound-button.component";
-import { HttpService } from '../../shared/services/http.service';
 import { FormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
-import { environment } from '../../../environments/environment';
-import { AlertService } from '../../shared/services/alert.service';
 import { SOUNDS, SoundButton } from './sounds.data';
 
 @Component({
@@ -17,16 +14,11 @@ import { SOUNDS, SoundButton } from './sounds.data';
 export class YapperComponent implements OnInit {
   allButtons: SoundButton[] = [];
   currentButtons: SoundButton[] | null = null;
-  apiURL: string = environment.apiUrl;
-  suggestion: string = '';
   searchTerm: string = '';
   searchSubject: Subject<string> = new Subject();
   currentSound?: HTMLAudioElement;
 
-  constructor(
-    private httpService: HttpService,
-    private alertService: AlertService,
-  ) {
+  constructor() {
     this.searchSubject
     .pipe(
       debounceTime(500),
@@ -52,10 +44,8 @@ export class YapperComponent implements OnInit {
     // Stop all the sounds
     this.currentSound?.pause();
 
-    // Start new sound (audio hébergé sur jukehost)
-    this.currentSound = new Audio(`https://audio.jukehost.co.uk/${button.endpoint}`);
-
-    this.httpService.post(`${this.apiURL}/analytics/${button.sound}`, {}).subscribe();
+    // Start new sound (mp3 embarqués dans le front, servis depuis public/sounds)
+    this.currentSound = new Audio(`sounds/${button.sound}.mp3`);
 
     this.currentSound.play();
   }
@@ -74,27 +64,8 @@ export class YapperComponent implements OnInit {
       return;
     }
 
-    this.currentButtons = this.allButtons.filter((button: any) => {
+    this.currentButtons = this.allButtons.filter((button: SoundButton) => {
       return button.name.toLowerCase().includes(searchTerm.toLowerCase());
-    });
-  }
-
-  onSubmit() {
-    if (this.suggestion) {
-      this.sendSuggestion(this.suggestion);
-    }
-    this.suggestion = '';
-  }
-
-  sendSuggestion(suggestion: string) {
-    this.httpService.post(`${this.apiURL}/suggestions`, { suggestion }).subscribe({
-      next: () => {
-        this.alertService.addAlert('success', 'Suggestion sent successfully');
-      },
-      error: (error) => {
-        console.error(error);
-        this.alertService.addAlert('danger', 'Error sending suggestion womp womp');
-      }
     });
   }
 }

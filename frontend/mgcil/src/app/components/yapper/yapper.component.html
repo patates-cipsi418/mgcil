@@ -47,18 +47,5 @@
     @else {
       <span class="text-center my-3">No sounds found womp womp 😔</span>
     }
-
-    <form class="d-flex justify-content-center align-items-center my-3 pb-2" (ngSubmit)="onSubmit()">
-      <label for="suggestion" class="form-label m-0">Suggestion?</label>
-      <input
-        type="text"
-        class="form-control w-50 mx-2"
-        id="suggestion"
-        name="suggestion"
-        maxlength="1000"
-        [(ngModel)]="suggestion"
-      >
-      <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
   }
 </div>
