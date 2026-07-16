@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { AlertService } from '../../shared/services/alert.service';
+import { SOUNDS, SoundButton } from './sounds.data';
 
 @Component({
   selector: 'app-yapper',
@@ -14,8 +15,8 @@ import { AlertService } from '../../shared/services/alert.service';
   styleUrl: './yapper.component.scss'
 })
 export class YapperComponent implements OnInit {
-  allButtons: any = [];
-  currentButtons: any = null;
+  allButtons: SoundButton[] = [];
+  currentButtons: SoundButton[] | null = null;
   apiURL: string = environment.apiUrl;
   suggestion: string = '';
   searchTerm: string = '';
@@ -37,36 +38,24 @@ export class YapperComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.httpService.get(`${this.apiURL}/sounds`)
-      .subscribe((response) => {
-        this.allButtons = response;
-        this.currentButtons = this.allButtons;
-      }
-    );
+    // Sons embarqués dans le front (plus de dépendance au backend)
+    this.allButtons = SOUNDS;
+    this.currentButtons = this.allButtons;
   }
 
   playSound(index: number) {
+    const button = this.currentButtons?.[index];
+    if (!button) {
+      return;
+    }
+
     // Stop all the sounds
     this.currentSound?.pause();
 
-    // Start new sound
+    // Start new sound (audio hébergé sur jukehost)
+    this.currentSound = new Audio(`https://audio.jukehost.co.uk/${button.endpoint}`);
 
-
-    if (environment.production) {
-      // New way
-      const url = `https://audio.jukehost.co.uk/${this.currentButtons[index].endpoint}`;
-      this.currentSound = new Audio(url);
-
-      this.httpService.post(`${this.apiURL}/analytics/${this.currentButtons[index].sound}`, {}).subscribe();
-    } else {
-      // Old way
-      // this.currentSound = new Audio(`${this.apiURL}/sounds/${this.currentButtons[index].sound}`);
-
-      const url = `https://audio.jukehost.co.uk/${this.currentButtons[index].endpoint}`;
-      this.currentSound = new Audio(url);
-
-      this.httpService.post(`${this.apiURL}/analytics/${this.currentButtons[index].sound}`, {}).subscribe();
-    }
+    this.httpService.post(`${this.apiURL}/analytics/${button.sound}`, {}).subscribe();
 
     this.currentSound.play();
   }
