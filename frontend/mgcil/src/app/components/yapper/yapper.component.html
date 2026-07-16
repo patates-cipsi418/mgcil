@@ -1,6 +1,14 @@
 <div class="yapper d-flex flex-column p-2 h-100">
   <h1 class="text-center">yapping board</h1>
 
+  <div class="alert alert-info d-flex flex-column flex-sm-row align-items-center justify-content-center gap-2 text-center" role="alert">
+    <span>Envie de partager ton fun ? Faire du bruit à plusieurs ?</span>
+    <a href="https://etscrap.xyz" class="btn btn-primary btn-sm">
+      <i class="bi bi-people-fill"></i>
+      C'est sur etscrap.xyz
+    </a>
+  </div>
+
   @if (currentButtons === null) {
     <div class="d-flex justify-content-center align-items-center flex-grow-1">
       <span class="me-2">Loading sounds womp womp...</span>
